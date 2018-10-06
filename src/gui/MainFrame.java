@@ -4,33 +4,57 @@ import logic.Logic;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainFrame extends JFrame {
 
-    public JTextPane pane = new JTextPane();
-    public JButton btn = new JButton();
+    public List<JComponent> componentList = new ArrayList<>();
+
+    public JTextPane listPane = new JTextPane();
+    public JButton powerButton = new JButton();
 
     public MainFrame() {
         super();
         setMainFrameProperties();
 
-        add(btn);
-        setButtonProperties();
-
-        add(pane);
-        setPaneProperties();
+        createComponents();
+        addComponents();
     }
 
-    private void setPaneProperties() {
-        pane.setContentType("text/html");
-        pane.setText("<html>" + Logic.getClipboardContent() + "</html>");
-        pane.setEditable(false);
+    private void createComponents() {
+        createPowerButton();
+        createListPane();
     }
 
-    private void setButtonProperties() {
-        btn.setText("Print clipboard content");
-        btn.addActionListener(e -> pane.setText(Logic.getClipboardContent()));
-        btn.setSize(this.getWidth(), this.getHeight() / 2);
+    private void addComponents() {
+        for (JComponent jComponent : componentList) {
+            this.add(jComponent);
+        }
+    }
+
+    public void createPowerButton() {
+        setPowerButtonProperties();
+    }
+
+    public void createListPane() {
+
+    }
+
+    private void setListPaneProperties() {
+        listPane.setContentType("text/html");
+        listPane.setText("<html>" + Logic.getClipboardContent() + "</html>");
+        listPane.setEditable(false);
+    }
+
+    private void setPowerButtonProperties() {
+        if (!Logic.startedRecording) {
+            powerButton.setText("Click to start recording");
+        } else {
+            powerButton.setText("Click to stop recording");
+        }
+        powerButton.addActionListener(e -> Logic.powerButtonPushed());
+        powerButton.setSize(this.getWidth(), this.getHeight() / 2);
     }
 
     private void setMainFrameProperties() {
@@ -39,11 +63,6 @@ public class MainFrame extends JFrame {
         setSize(300, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
-
-
-        this.add(pane);
-        pane.getInputMap().put(KeyStroke.getKeyStroke("F2"), (Logic.getClipboardContent()));
-        this.add(btn);
     }
 
 

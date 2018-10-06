@@ -1,4 +1,5 @@
 import gui.MainFrame;
+import logic.Logic;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -29,8 +30,8 @@ public class Main {
     private static LinkedList<String> clipList = new LinkedList<>();
 
     public static void main(String[] args) {
+        Logic l = new Logic();
         new MainFrame();
-        String myString = "This text will be copied into clipboard when running this code!";
 
 
     }
@@ -43,9 +44,7 @@ public class Main {
 //    }
 
     public static void paste(Integer i) {
-        String toPaste = clipList.get(i);
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        clipboard.setContents(new StringSelection(toPaste), null);
+        putOntoClipboard(clipList.get(i));
     }
 
     public static void putOntoClipboard(String s) {
