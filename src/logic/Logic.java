@@ -1,28 +1,38 @@
 package logic;
 
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.util.LinkedList;
 
 public class Logic {
-    public LinkedList<String> copper = new LinkedList<>();
-
-    public static Boolean startedRecording = false;
+    public static LinkedList<String> copper = new LinkedList<>();
     private String currentContent = "";
 
     public Logic() {
-        while (startedRecording) {
-            try {
-                Thread.sleep(300);
-                if (!getClipboardContent().equals(currentContent)) {
-                    System.out.println(getClipboardContent());
+        Thread t = new Thread(() -> {
+            while (true) {
+                String copied = getClipboardContent();
+                if (!currentContent.equals(copied)) {
+                    currentContent = copied;
+                    if (!copper.contains(currentContent)) {
+                        copper.add(copied);
+                    }
+                    System.out.println("added: " + getClipboardContent());
                 }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                try {
+                    Thread.sleep(300);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                System.out.println(copper);
             }
-        }
+        });
+        t.run();
     }
 
     public static String getClipboardContent() {
@@ -38,16 +48,13 @@ public class Logic {
         return "---";
     }
 
-    public static void powerButtonPushed() {
-        startedRecording = !startedRecording;
+    public static void paste(Integer i) {
+        putOntoClipboard(copper.get(i));
     }
 
-//    public void copy(){
-//        StringSelection ss = new StringSelection();
-//        if (!copper.contains(ss.toString())){
-//            copper.add(ss.toString());
-//        }
-//    }
-
-
+    private static void putOntoClipboard(String s) {
+        StringSelection stringSelection = new StringSelection(s);
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(stringSelection, null);
+    }
 }
